@@ -24,7 +24,7 @@ const BookDetail = ({ navigation }) => {
    }
    const addToCart = () => ToastAndroid.show('Add to Cart', ToastAndroid.SHORT);
    return (
-      <SafeAreaView style={styles.safeView}>
+      <SafeAreaView style={{backgroundColor: theme.bgc, flex: 1}}>
          <ScrollView showsVerticalScrollIndicator={false}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backIcon, { backgroundColor: theme.white }]}>
                <Ionicons name="arrow-back" size={21} color="black" />
@@ -134,9 +134,6 @@ const BookDetail = ({ navigation }) => {
 export default BookDetail
 
 const styles = StyleSheet.create({
-   safeView: {
-      flex: 1,
-   },
    // Header
    header: {
       height: 50,

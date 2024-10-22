@@ -18,9 +18,8 @@ const Profile = ({ navigation }) => {
   // Theme
   const { theme } = useTheme();
   // Sing out method
-  const { isAuthenticated, setIsAuthenticated, user } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, user, setUser } = useAuth();
   const signOutMethod = () => {
-    setIsAuthenticated(false)
     Alert.alert(
       'Sign out?', 'Do you want to sign out?',
       [
@@ -31,6 +30,8 @@ const Profile = ({ navigation }) => {
         {
           text: 'Sign out',
           onPress: () => {
+            setIsAuthenticated(false)
+            setUser([]);
             navigation.replace('SignIn')
             console.log('User signed out')
             console.log('Is authenticated: ', isAuthenticated)
@@ -41,18 +42,18 @@ const Profile = ({ navigation }) => {
     )
   }
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: theme.bgc}}>
-      <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.bgc }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
 
         <View style={[styles.profileContainer, { backgroundColor: theme.orange }]}>
           <Image style={styles.profileImage} source={require('../../assets/images/zeros.jpg')} />
           <View style={styles.profileInfoContainer}>
-            <Text style={[styles.userNameText, { color: theme.white }]}>{'TuanPham' || user.username}</Text>
-            <Text style={{ color: theme.white }}>{'phambaanhtuan2003@gmail.com' || user.email}</Text>
+            <Text style={[styles.userNameText, { color: theme.white }]}>{user.username || 'TuanPham'}</Text>
+            <Text style={{ color: theme.white }}>{user.email || 'TuanPham'}</Text>
           </View>
         </View>
 
-        <View style={[styles.settingContainer, {backgroundColor: 'white'}]}>
+        <View style={[styles.settingContainer, { backgroundColor: 'white' }]}>
           <SettingCard
             onPress={() => navigation.navigate('Developer')}
             icon={<Ionicons name="settings-outline" size={24} color="black" />}

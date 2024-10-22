@@ -13,7 +13,7 @@ export const ThemeContextProvider: React.FC<{ children: React.ReactNode }> = ({ 
       white: scheme === 'dark'? 'white' : 'white',
       black: scheme === 'dark'? 'black' : 'black',
       gray: scheme === 'dark' ? 'gray' : 'lightgray',
-      green: scheme === 'dark' ? 'lightgreen' : 'green',
+      green: scheme === 'dark' ? 'green' : 'green',
       orange: scheme === 'dark' ? '#ff7233' : '#ff7233',
       lightOrange: scheme === 'dark' ? '#ffa831' : '#ffa831',
    }

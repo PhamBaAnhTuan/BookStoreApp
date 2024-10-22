@@ -17,11 +17,11 @@ const AddBook = ({ navigation }) => {
    // Add book
    const { data, setData, addBookMethod } = useData();
    const handelAdd = () => {
-      if (!data.title || !data.author || !data.img || !data.price || !data.description) {
+      if (!data.title || !data.author || !data.price || !data.type) {
          return Alert.alert("Lack of information!", "Please fill all this fields!")
       }
       addBookMethod();
-      navigation.replace('Developer')
+      navigation.goBack();
    }
 
    return (
@@ -36,7 +36,7 @@ const AddBook = ({ navigation }) => {
                <Text style={styles.title}>Add New Book</Text>
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Title:</Text>
-                  <TextInput style={styles.textInput} placeholder="Enter book title"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Enter book title"
                      onChangeText={(value) => setData({ ...data, title: value })}
                      value={data.title}
                   />
@@ -44,7 +44,7 @@ const AddBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Author:</Text>
-                  <TextInput style={styles.textInput} placeholder="Enter author's name"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Enter author's name"
                      onChangeText={(value) => setData({ ...data, author: value })}
                      value={data.author}
                   />
@@ -52,7 +52,7 @@ const AddBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Image book:</Text>
-                  <TextInput style={styles.textInput} placeholder="Image Url"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Image Url"
                      onChangeText={(value) => setData({ ...data, img: value })}
                      value={data.img}
                      keyboardType='url'
@@ -61,7 +61,7 @@ const AddBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Price:</Text>
-                  <TextInput style={styles.textInput} placeholder="$" keyboardType='number-pad'
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="$" keyboardType='number-pad'
                      onChangeText={(value) => setData({ ...data, price: value })}
                      // onChange={handlePriceChange}
                      value={data.price}
@@ -70,7 +70,7 @@ const AddBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Type:</Text>
-                  <TextInput style={styles.textInput} placeholder="Life, Self develop..."
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Life, Self develop..."
                      onChangeText={(value) => setData({ ...data, type: value })}
                      value={data.type}
                   />
@@ -78,7 +78,7 @@ const AddBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Discount:</Text>
-                  <TextInput style={styles.textInput} placeholder="Number" keyboardType='number-pad'
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Number" keyboardType='number-pad'
                      onChangeText={(value) => setData({ ...data, discount: value })}
                      value={data.discount}
                   />
@@ -86,7 +86,7 @@ const AddBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Description:</Text>
-                  <TextInput style={styles.textInput} placeholder="Enter description"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Enter description"
                      onChangeText={(value) => setData({ ...data, description: value })}
                      value={data.description}
                      multiline={true}
@@ -110,7 +110,7 @@ const AddBook = ({ navigation }) => {
                </View>
 
                <AddButton
-                  onPress={addBookMethod}
+                  onPress={handelAdd}
                   title='Add'
                   color='green'
                />

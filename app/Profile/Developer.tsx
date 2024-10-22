@@ -52,18 +52,23 @@ const Developer = ({ navigation }) => {
    return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.bgc }}>
          <View style={[styles.headerContainer, { backgroundColor: theme.orange }]}>
-            <Text style={{ fontSize: 21, fontWeight: 'bold', paddingLeft: 10, color: 'white' }}>Welcome to Developer Mode</Text>
+            <View style={{flexDirection: 'row'}}>
+               <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backIcon, { backgroundColor: theme.white }]}>
+                  <Ionicons name="arrow-back" size={21} color="black" />
+               </TouchableOpacity>
+               <Text style={{ fontSize: 21, fontWeight: 'bold', paddingLeft: 10, color: 'white' }}>Welcome to Developer Mode</Text>
+            </View>
             <SearchInput />
          </View>
 
          <View style={[styles.listBookContainer]}>
             <View style={styles.titleContainer}>
-               <Text style={styles.title}>List of books</Text>
+               <Text style={[styles.title, { color: theme.text }]}>List of books</Text>
                <TouchableOpacity onPress={() => {
                   navigation.navigate('AddBook')
                   setData({})
                }}>
-                  <Ionicons name="add-circle-outline" size={27} color="black" />
+                  <Ionicons name="add-circle-outline" size={27} color={theme.text} />
                </TouchableOpacity>
             </View>
 
@@ -95,6 +100,13 @@ const styles = StyleSheet.create({
       borderBottomLeftRadius: 15,
       borderBottomRightRadius: 15,
    },
+   backIcon: {
+      height: 'auto',
+      width: 'auto',
+      padding: 3,
+      borderRadius: 50,
+      marginLeft: 10
+   },
 
 
    // List book container
@@ -113,7 +125,6 @@ const styles = StyleSheet.create({
    title: {
       fontSize: 21,
       fontWeight: 'bold',
-      color: 'black',
    },
 
    listBookWrap: {

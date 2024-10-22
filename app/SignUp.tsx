@@ -1,5 +1,5 @@
 import { Dimensions, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // Context
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
@@ -23,11 +23,24 @@ const SignUp = ({ navigation }) => {
     signUp, isAuthenticated, setIsAuthenticated,
     email, setEmail, username, setUsername, password, setPassword
   } = useAuth();
+  const [isLogin, setIsLogin] = useState(false);
   // Handle email change
   const handleEmailChange = (text: string) => setEmail(text);
   const handleUsernameChange = (text: string) => setUsername(text);
   const handlePasswordChange = (text: string) => setPassword(text);
-  // Handle sign in
+  // Handle sign up
+  useEffect(() => {
+    if(isLogin) {
+      signUpMethod();
+      if(isAuthenticated) {
+        navigation.replace('TabNavigator');
+      }
+      else{
+        return;
+      }
+      setIsLogin(false);
+    }
+  }, [isLogin, isAuthenticated]); 
   const signUpMethod = async () => {
     if (!email && !username && !password) {
       ToastAndroid.show('Enter Full name and Password!', ToastAndroid.SHORT);
@@ -44,15 +57,13 @@ const SignUp = ({ navigation }) => {
     }
     try {
       await signUp(email, username, password);
-      isAuthenticated === true
-        ? navigation.replace('TabNavigator')
-        : null
     } catch (error) {
       console.log('Sign up error: ', error);
     }
     setEmail('');
     setUsername('');
     setPassword('');
+    setIsLogin(false);
   };
   return (
     <SafeAreaView style={{ backgroundColor: theme.orange, flex: 1, justifyContent: 'space-between' }}>
@@ -67,7 +78,7 @@ const SignUp = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <View style={styles.inputWrap}>
           <Text style={[styles.emailText, { color: 'black' }]}>Email</Text>
-          <TextInput style={[styles.emailInput, { backgroundColor: theme.white }]}
+          <TextInput style={[styles.emailInput, { backgroundColor: theme.white, color: 'black' }]}
             keyboardType='email-address'
             value={email}
             onChangeText={handleEmailChange}
@@ -76,7 +87,7 @@ const SignUp = ({ navigation }) => {
 
         <View style={styles.inputWrap}>
           <Text style={[styles.emailText, { color: 'black' }]}>User Name</Text>
-          <TextInput style={[styles.emailInput, { backgroundColor: theme.white }]}
+          <TextInput style={[styles.emailInput, { backgroundColor: theme.white, color: 'black' }]}
             value={username}
             onChangeText={handleUsernameChange}
           />
@@ -85,7 +96,7 @@ const SignUp = ({ navigation }) => {
         <View style={styles.inputWrap}>
           <Text style={[styles.emailText, { color: 'black' }]}>Password</Text>
           <View style={[styles.passwordInputContainer, { backgroundColor: theme.white }]}>
-            <TextInput style={[styles.passwordInput, { backgroundColor: theme.white }]}
+            <TextInput style={[styles.passwordInput, { backgroundColor: theme.white, color: 'black' }]}
               secureTextEntry={isHide}
               value={password}
               onChangeText={handlePasswordChange}
@@ -102,7 +113,7 @@ const SignUp = ({ navigation }) => {
       </View>
 
       <View style={styles.signUpBtnContainer}>
-        <TouchableOpacity style={[styles.signUpBtn, { backgroundColor: theme.green }]} onPress={signUpMethod}>
+        <TouchableOpacity style={[styles.signUpBtn, { backgroundColor: theme.green }]} onPress={() => setIsLogin(true)}>
           <Text style={styles.signUpText}>Create Account</Text>
         </TouchableOpacity>
 

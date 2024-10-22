@@ -19,8 +19,8 @@ const Home = ({ navigation }) => {
   const { theme } = useTheme();
   // Data
   const { books } = useData();
-  const {isAuthenticated, setIsAuthenticated} = useAuth();
-  // const log = () => console.log('Is authenticated: ', isAuthenticated);
+  const {isAuthenticated, setIsAuthenticated, user} = useAuth();
+  const log = () => console.log('User: ', user, '| Is authenticated: ', isAuthenticated)
 
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: theme.bgc}}>
@@ -35,13 +35,13 @@ const Home = ({ navigation }) => {
             <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('Cart')}>
               <Ionicons name="bag-outline" size={24} color="white" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.icon}>
+            <TouchableOpacity style={styles.icon} onPress={log}>
               <Ionicons name="chatbubble-outline" size={24} color="white" />
             </TouchableOpacity>
           </View>
         </View>
 
-        <Text style={[styles.itemCardTitle, { color: theme.black }]}>Recommended daily</Text>
+        <Text style={[styles.itemCardTitle, { color: theme.text }]}>Category</Text>
         <View style={[styles.categoryContainer]}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {books.map((book:any, index:number) =>(

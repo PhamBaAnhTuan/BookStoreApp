@@ -9,7 +9,7 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
    // API URL
    const API_URL = 'http://192.168.8.108:8000/api';
    // Sign in method
-   const [user, setUser] = useState();
+   const [user, setUser] = useState([]);
    const [isAuthenticated, setIsAuthenticated] = useState(false);
    const [email, setEmail] = useState('');
    const [username, setUsername] = useState('');
@@ -26,10 +26,15 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
          ToastAndroid.show('Sign in successful!', ToastAndroid.SHORT);
          return response.data;
       } catch (error: any) {
+         let msg = error.response.data;
+         if (msg = {"detail": "No active account found with the given credentials"})
+            { msg = 'Invalid Email or Password!' }
+         console.log(msg);
          // console.error('Error signing in:', error.response?.data);
-         ToastAndroid.show('Sign in failed!', ToastAndroid.SHORT);
+         ToastAndroid.show(msg, ToastAndroid.SHORT);
       }
    };
+   
    // Sign up method
    const signUp = async (email: string, username: string, password: string) => {
       try {
@@ -44,15 +49,19 @@ export const AuthContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
          ToastAndroid.show('Sign up successful!', ToastAndroid.SHORT);
          return response.data;
       } catch (error: any) {
-         console.error('Error signing up:', error.response?.data);
-         ToastAndroid.show('Sign up failed!', ToastAndroid.SHORT);
+         let msg = error.response.data;
+         if (msg = {"error": "UNIQUE constraint failed: auth_user.username"})
+            { msg = 'User name already exist!' }
+         console.log(msg);
+         // console.error('Error signing up:', error.response?.data);
+         ToastAndroid.show(msg, ToastAndroid.SHORT);
       }
 
    };
    return (
       <AuthContext.Provider value={{
          API_URL, signIn, signUp, isAuthenticated, setIsAuthenticated,
-         user, email, setEmail, username, setUsername, password, setPassword
+         user, setUser, email, setEmail, username, setUsername, password, setPassword
       }}>
          {children}
       </AuthContext.Provider>

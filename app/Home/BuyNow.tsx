@@ -43,7 +43,7 @@ const BuyNow = ({ navigation }) => {
    const [name, setName] = useState('');
    const textChange = (text: string) => setName(text);
    return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ backgroundColor: theme.bgc, flex: 1 }}>
          <Header
             onPress={() => navigation.goBack()}
          />
@@ -118,8 +118,8 @@ const BuyNow = ({ navigation }) => {
                   <Text style={[styles.voucherText, { color: 'black' }]} >Free ship</Text>
 
                   <View style={styles.voucherWrap}>
-                     <View style={[styles.freeShipWrap, { borderColor: theme.green }]}>
-                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: theme.green }}>FREE SHIP</Text>
+                     <View style={[styles.freeShipWrap, { borderColor: 'green' }]}>
+                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: 'green' }}>FREE SHIP</Text>
                      </View>
                      {/* <MaterialIcons name="keyboard-arrow-right" size={24} color={'black'} /> */}
                   </View>
@@ -243,6 +243,7 @@ const styles = StyleSheet.create({
       width: 'auto',
       // borderWidth: 1,
       paddingHorizontal: 5,
+      // marginRight: 10,
       backgroundColor: 'orange',
       alignItems: 'center',
       justifyContent: 'center',
@@ -252,6 +253,7 @@ const styles = StyleSheet.create({
       width: 'auto',
       borderWidth: 1,
       paddingHorizontal: 5,
+      marginLeft: 10,
       borderColor: 'green',
       alignItems: 'center',
       justifyContent: 'center',

@@ -22,29 +22,38 @@ import UpdateBook from './app/Profile/UpdateBook';
 
 import Developer from './app/Profile/Developer';
 
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import {persistor, store} from './app/redux/store/store';
+
 const Stack = createNativeStackNavigator();
 
 function App(): React.JSX.Element {
   return (
-    <ThemeContextProvider>
-      <AuthContextProvider>
-        <DataContextProvider>
-          <NavigationContainer>
-            <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName='TabNavigator'>
-              <Stack.Screen name='TabNavigator' component={TabNavigator}/>
-              <Stack.Screen name='SignIn' component={SignIn}/>
-              <Stack.Screen name='SignUp' component={SignUp}/>
-              <Stack.Screen name='BookDetail' component={BookDetail}/>
-              <Stack.Screen name='BuyNow' component={BuyNow}/>
-              <Stack.Screen name='AddBook' component={AddBook}/>
-              <Stack.Screen name='UpdateBook' component={UpdateBook}/>
-              <Stack.Screen name='DoneBuy' component={DoneBuy}/>
-              <Stack.Screen name='Developer' component={Developer}/>
-            </Stack.Navigator>
-          </NavigationContainer>
-        </DataContextProvider>
-      </AuthContextProvider>
-    </ThemeContextProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <ThemeContextProvider>
+              <AuthContextProvider>
+                <DataContextProvider>
+                  <NavigationContainer>
+                    <Stack.Navigator screenOptions={{headerShown: false}} initialRouteName='SignIn'>
+                      <Stack.Screen name='TabNavigator' component={TabNavigator}/>
+                      <Stack.Screen name='SignIn' component={SignIn}/>
+                      <Stack.Screen name='SignUp' component={SignUp}/>
+                      <Stack.Screen name='BookDetail' component={BookDetail}/>
+                      <Stack.Screen name='BuyNow' component={BuyNow}/>
+                      <Stack.Screen name='AddBook' component={AddBook}/>
+                      <Stack.Screen name='UpdateBook' component={UpdateBook}/>
+                      <Stack.Screen name='DoneBuy' component={DoneBuy}/>
+                      <Stack.Screen name='Developer' component={Developer}/>
+                    </Stack.Navigator>
+                  </NavigationContainer>
+                </DataContextProvider>
+              </AuthContextProvider>
+            </ThemeContextProvider>
+          </PersistGate>
+        </Provider>
   );
 }
 export default App;

@@ -45,8 +45,8 @@ const ItemCart = (props: Props) => {
                </View>
 
                { props.is_free &&
-                  <View style={[styles.freeShipWrap, { borderColor: theme.green }]}>
-                  <Text style={{ fontSize: 10, fontWeight: 'bold', color: theme.green }}>FREE SHIP</Text>
+                  <View style={[styles.freeShipWrap, { borderColor: 'green' }]}>
+                  <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'green' }}>FREE SHIP</Text>
                </View>
                }
             </View>

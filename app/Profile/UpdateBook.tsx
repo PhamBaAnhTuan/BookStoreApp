@@ -20,6 +20,7 @@ const UpdateBook = ({ navigation }) => {
    const { theme } = useTheme();
    // Add book
    const { data, setData, updateBookMethod } = useData();
+
    useEffect(() => {
       if (selectedBook) {
          setData({
@@ -33,7 +34,7 @@ const UpdateBook = ({ navigation }) => {
             description: selectedBook.description,
          })
       }
-   }, [selectedBook])
+   }, [selectedBook]);
 
    return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.bgc }}>
@@ -47,7 +48,7 @@ const UpdateBook = ({ navigation }) => {
                <Text style={styles.title}>Update Book</Text>
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Title:</Text>
-                  <TextInput style={styles.textInput} placeholder="Enter book title"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Enter book title"
                      onChangeText={(value) => setData({ ...data, title: value })}
                      value={data.title}
                   />
@@ -55,7 +56,7 @@ const UpdateBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Author:</Text>
-                  <TextInput style={styles.textInput} placeholder="Enter author's name"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Enter author's name"
                      onChangeText={(value) => setData({ ...data, author: value })}
                      value={data.author}
                   />
@@ -63,7 +64,7 @@ const UpdateBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Image book:</Text>
-                  <TextInput style={styles.textInput} placeholder="Image Url"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Image Url"
                      onChangeText={(value) => setData({ ...data, img: value })}
                      value={data.img}
                      keyboardType='url'
@@ -72,7 +73,7 @@ const UpdateBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Price:</Text>
-                  <TextInput style={styles.textInput} placeholder="$" keyboardType='number-pad'
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="$" keyboardType='number-pad'
                      onChangeText={(value) => setData({ ...data, price: value })}
                      value={data.price}
                   />
@@ -80,7 +81,7 @@ const UpdateBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Type:</Text>
-                  <TextInput style={styles.textInput} placeholder="Life, Self develop..."
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Life, Self develop..."
                      onChangeText={(value) => setData({ ...data, type: value })}
                      value={data.type}
                   />
@@ -88,7 +89,7 @@ const UpdateBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Discount:</Text>
-                  <TextInput style={styles.textInput} placeholder="Number" keyboardType='number-pad'
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Number" keyboardType='number-pad'
                      onChangeText={(value) => setData({ ...data, discount: value })}
                      value={data.discount}
                   />
@@ -96,7 +97,7 @@ const UpdateBook = ({ navigation }) => {
 
                <View style={styles.inputWrap}>
                   <Text style={styles.titleText}>Description:</Text>
-                  <TextInput style={styles.textInput} placeholder="Enter description"
+                  <TextInput style={[styles.textInput, {color: 'black'}]} placeholder="Enter description"
                      onChangeText={(value) => setData({ ...data, description: value })}
                      value={data.description}
                      multiline={true}
@@ -120,7 +121,7 @@ const UpdateBook = ({ navigation }) => {
                </View>
 
                <AddButton
-                  onPress={() => updateBookMethod(selectedBook.id) ? navigation.navigate('Developer'): undefined}
+                  onPress={() => updateBookMethod(selectedBook.id) ? navigation.goBack(): undefined}
                   title='Update'
                   color='green'
                />
