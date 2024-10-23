@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // import storage from 'redux-persist/lib/storage'
 import { thunk } from 'redux-thunk';
 
-import authReducer from '../slice/authSlice';
+import {authReducer} from '../reducer/authReducer';
 
 const persistConfig = {
    key: 'root',
@@ -12,11 +12,12 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-   auth: authReducer
+   auth: persistReducer(persistConfig, authReducer)
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-export const store = createStore(persistedReducer, applyMiddleware(thunk));
+export const store = createStore(rootReducer, applyMiddleware(thunk));
 export const persistor = persistStore(store);
 export type RootState = ReturnType<typeof rootReducer>;
+// export type AppDispatch = typeof store.dispatch;
