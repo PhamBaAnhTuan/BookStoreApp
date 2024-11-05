@@ -74,3 +74,12 @@ yarn-error.log
 !.yarn/versions
 
 .env
+.eslintrc.js
+.prettierrc.js
+.watchmanconfig
+app.json
+babel.config.js
+Gemfile
+jest.config.js
+metro.config.js
+tsconfig.json
