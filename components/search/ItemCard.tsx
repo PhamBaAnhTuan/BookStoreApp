@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react';
 // Context
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 
 interface Props {
@@ -11,14 +11,17 @@ interface Props {
 }
 
 const ItemCard = (props: Props) => {
-   // Theme
-   const { theme } = useTheme();
+   // Context
+  const { useThemeSelector } = useAuth();
+  // Redux state
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
    return (
-      <TouchableOpacity style={[styles.container, { backgroundColor: theme.white }]} onPress={props.onPress}>
+      <TouchableOpacity style={[styles.container, { backgroundColor: color.surface }]} onPress={props.onPress}>
          <Image style={styles.itemImg} source={{ uri: props.itemImg }} />
 
          <View style={styles.in4Container}>
-            <Text style={[styles.itemName, { color: 'black' }]}>{props.itemName}</Text>
+            <Text style={[styles.itemName, { color: color.text }]}>{props.itemName}</Text>
          </View>
       </TouchableOpacity>
    )

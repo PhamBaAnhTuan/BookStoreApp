@@ -1,16 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react';
-// Context
-import { useTheme } from '../../context/ThemeContext';
 
-interface Props{
+interface Props {
    onPress: any,
    title: string,
    color: string
 }
 const AddButton = (props: Props) => {
-   // Theme
-   const {theme} = useTheme();
    const color = `${props.color}`
    return (
       <TouchableOpacity style={[styles.addBookBtn, { backgroundColor: color }]} onPress={props.onPress}>
@@ -30,6 +26,7 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
+      marginTop: 10
    },
    addBookText: {
       fontSize: 13,

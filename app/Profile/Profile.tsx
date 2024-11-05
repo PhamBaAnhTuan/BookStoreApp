@@ -1,24 +1,30 @@
 import { Alert, Dimensions, Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React from 'react';
-// Theme context
-import { useTheme } from '../../context/ThemeContext';
+import React, { useEffect } from 'react';
+// Context
 import { useAuth } from '../../context/AuthContext';
+// Redux action
+import { signOutAction } from '../redux/reducer/authActions';
+import { setTheme } from '../redux/reducer/themeActions';
 // Icons
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 // Components
 import SettingCard from '../../components/profile/SettingCard';
-// Context
+import NavBar from '../../components/home/NavBar';
 
 
 const Profile = ({ navigation }) => {
-  // Theme
-  const { theme } = useTheme();
-  // Sing out method
-  const { isAuthenticated, setIsAuthenticated, user, setUser } = useAuth();
+  // Auth context
+  const { useAuthSelector, useThemeSelector, dispatch } = useAuth();
+  // Redux state
+  const { isAuthenticated, user, accessToken, books } = useAuthSelector;
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
+  // Handle sign out
   const signOutMethod = () => {
     Alert.alert(
       'Sign out?', 'Do you want to sign out?',
@@ -30,49 +36,79 @@ const Profile = ({ navigation }) => {
         {
           text: 'Sign out',
           onPress: () => {
-            setIsAuthenticated(false)
-            setUser([]);
-            navigation.replace('SignIn')
-            console.log('User signed out')
-            console.log('Is authenticated: ', isAuthenticated)
+            dispatch(signOutAction())
           },
           style: 'default'
         }
       ]
     )
   }
+
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      navigation.replace('SignIn')
+      console.log('User signed out')
+      console.log(
+        'User: ', user?.username,
+        '| Is authenticated: ', isAuthenticated,
+        '| accessToken: ', accessToken,
+      )
+    }
+  }, [isAuthenticated])
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.bgc }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
 
-        <View style={[styles.profileContainer, { backgroundColor: theme.orange }]}>
-          <Image style={styles.profileImage} source={require('../../assets/images/zeros.jpg')} />
-          <View style={styles.profileInfoContainer}>
-            <Text style={[styles.userNameText, { color: theme.white }]}>{user.username || 'TuanPham'}</Text>
-            <Text style={{ color: theme.white }}>{user.email || 'TuanPham'}</Text>
-          </View>
-        </View>
+        <NavBar
+          children={
+            <>
+              <TouchableOpacity>
+                <Image style={styles.profileImage} source={require('../../assets/images/zeros.jpg')} />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.profileInfoContainer}>
+                <Text style={[styles.userNameText, { color: color.onText }]}>{user?.username || 'User name'}</Text>
+                <Text style={{ color: color.onText }}>{user?.email || 'Your email here'}</Text>
+              </TouchableOpacity>
+            </>
+          }
+        />
 
-        <View style={[styles.settingContainer, { backgroundColor: 'white' }]}>
-          <SettingCard
-            onPress={() => navigation.navigate('Developer')}
-            icon={<Ionicons name="settings-outline" size={24} color="black" />}
-            title='Developer'
-          />
+        <View style={[styles.settingContainer, { backgroundColor: color.surface }]}>
+          {user?.is_superuser
+            ? <SettingCard
+              onPress={() => navigation.navigate('Developer')}
+              icon={<Ionicons name="settings-outline" size={24} color={color.onSurface} />}
+              title='Developer'
+            />
+            : null
+          }
           <SettingCard
             onPress={() => navigation.navigate('AddBook')}
-            icon={<Ionicons name="add" size={27} color="black" />}
+            icon={<Ionicons name="add" size={27} color={color.onSurface} />}
             title='Add book'
           />
           <SettingCard
-            onPress={null}
-            icon={<Ionicons name="notifications-outline" size={24} color="black" />}
-            title='Notification'
+            onPress={() => navigation.navigate('UpdateProfile')}
+            icon={<Ionicons name="person-sharp" size={24} color={color.onSurface} />}
+            title='Change information'
           />
           <SettingCard
-            onPress={null}
-            icon={<Ionicons name="receipt-outline" size={24} color="black" />}
-            title='Receipt'
+            onPress={() => {
+              dispatch(setTheme('light'))
+              ToastAndroid.show('Set light theme successful', ToastAndroid.SHORT)
+            }}
+            icon={<Entypo name="light-up" size={24} color={color.onSurface} />}
+            title='Light theme'
+          />
+          <SettingCard
+            onPress={() => {
+              dispatch(setTheme('dark'))
+              ToastAndroid.show('Set dark theme successful', ToastAndroid.SHORT)
+            }}
+            icon={<MaterialIcons name="dark-mode" size={24} color={color.onSurface} />}
+            title='Dark theme'
           />
           <SettingCard
             onPress={signOutMethod}
@@ -94,17 +130,6 @@ export default Profile;
 
 const styles = StyleSheet.create({
   // profile container
-  profileContainer: {
-    height: 100,
-    width: '100%',
-    marginBottom: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15
-  },
-
   profileImage: {
     height: 70,
     width: 70,
@@ -113,7 +138,7 @@ const styles = StyleSheet.create({
   },
 
   profileInfoContainer: {
-    height: '100%',
+    height: '50%',
     width: '65%',
     // borderWidth: 1,
     justifyContent: 'center',
@@ -128,7 +153,7 @@ const styles = StyleSheet.create({
   settingContainer: {
     height: 'auto',
     width: '100%',
-    marginBottom: 5,
+    marginVertical: 15,
     borderRadius: 10,
     alignSelf: 'center',
     backgroundColor: 'lightgray'

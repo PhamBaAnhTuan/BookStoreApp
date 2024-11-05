@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react';
-// Theme
-import { useTheme } from '../../context/ThemeContext';
+// Context
+import { useAuth } from '../../context/AuthContext';
 // Icons
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -13,17 +13,20 @@ interface Props {
    title: string,
 }
 const SettingCard = (props: Props) => {
-   const { theme } = useTheme();
+   const { useThemeSelector } = useAuth();
+   const { theme } = useThemeSelector;
+   const color = theme.colors;
+
    return (
       <TouchableOpacity style={styles.container} onPress={props.onPress}>
          <View style={styles.iconContainer}>
             {props.icon}
          </View>
          <View style={styles.contentContainer}>
-            <Text style={{ color: 'black', fontWeight: 'bold' }}>{props.title}</Text>
+            <Text style={{ color: color.text, fontWeight: 'bold' }}>{props.title}</Text>
          </View>
          <View style={styles.wrap}>
-         <Entypo name="chevron-right" size={24} color="black" />
+            <Entypo name="chevron-right" size={24} color={color.onSurface} />
          </View>
       </TouchableOpacity>
    )

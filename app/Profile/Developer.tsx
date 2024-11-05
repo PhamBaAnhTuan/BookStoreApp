@@ -2,19 +2,23 @@ import { Alert, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'r
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 // Context
-import { useTheme } from '../../context/ThemeContext';
-import { useData } from '../../context/DataContext';
+import { useAuth } from '../../context/AuthContext';
 // Components
 import ListBook from '../../components/profile/ListBook';
 import SearchInput from '../../components/search/SearchInput';
 // Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
+// Actions
+import { deleteBookAction } from '../redux/reducer/authActions';
+
 
 const Developer = ({ navigation }) => {
-   // Theme
-   const { theme } = useTheme();
-   // Data
-   const { books, setData, removeBookMethod } = useData();
+   // Context
+   const { dispatch, useAuthSelector, useThemeSelector } = useAuth();
+   // Redux state
+   const { isAuthenticated, accessToken, user, books } = useAuthSelector;
+   const { theme } = useThemeSelector;
+   const color = theme.colors;
 
    // Remove confirm
    const [book, setBook] = useState({});
@@ -25,11 +29,12 @@ const Developer = ({ navigation }) => {
          handleRemove();
          setIsRemoving(false);
       }
+
    }, [book, isRemoving]);
 
    const handleRemove = () => {
       Alert.alert(
-         'Remove this book?', `Do you wanna remove ${book?.title}?`,
+         'Remove this books?', `Do you wanna remove ${book?.title}?`,
          [
             {
                text: 'Cancel',
@@ -41,7 +46,7 @@ const Developer = ({ navigation }) => {
             {
                text: 'Remove',
                onPress: () => {
-                  removeBookMethod(book.id, book.title);
+                  dispatch(deleteBookAction(book?.id, book?.title, accessToken))
                   ToastAndroid.show(`Removed ${book?.title}!`, ToastAndroid.SHORT);
                },
                style: 'default'
@@ -50,41 +55,50 @@ const Developer = ({ navigation }) => {
       )
    }
    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.bgc }}>
-         <View style={[styles.headerContainer, { backgroundColor: theme.orange }]}>
-            <View style={{flexDirection: 'row'}}>
-               <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backIcon, { backgroundColor: theme.white }]}>
-                  <Ionicons name="arrow-back" size={21} color="black" />
+      <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>
+         <View style={[styles.headerContainer, { backgroundColor: color.orange }]}>
+            <View style={{ flexDirection: 'row' }}>
+               <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backIcon, { backgroundColor: color.surface }]}>
+                  <Ionicons name="arrow-back" size={21} color={color.onSurface} />
                </TouchableOpacity>
-               <Text style={{ fontSize: 21, fontWeight: 'bold', paddingLeft: 10, color: 'white' }}>Welcome to Developer Mode</Text>
+               <Text style={{ fontSize: 21, fontWeight: 'bold', paddingLeft: 10, color: color.text }}>Welcome to Developer Mode</Text>
             </View>
             <SearchInput />
          </View>
 
          <View style={[styles.listBookContainer]}>
             <View style={styles.titleContainer}>
-               <Text style={[styles.title, { color: theme.text }]}>List of books</Text>
+               <Text style={[styles.title, { color: color.text }]}>List of books</Text>
                <TouchableOpacity onPress={() => {
                   navigation.navigate('AddBook')
-                  setData({})
+                  // setData({})
                }}>
-                  <Ionicons name="add-circle-outline" size={27} color={theme.text} />
+                  <Ionicons name="add-circle-outline" size={27} color={color.text} />
                </TouchableOpacity>
             </View>
 
-            <View style={[styles.listBookWrap, { backgroundColor: theme.white }]}>
-               {books.map((book: any, index: number) => (
-                  <ListBook
-                     key={index}
-                     title={book.title}
-                     onPress={() => navigation.navigate('UpdateBook', { selectedBook: books[index] })}
-                     remove={() => {
-                        setBook(books[index]);
-                        setIsRemoving(true);
-                     }}
-                  />
-               ))}
-            </View>
+            {books.length > 0 ? 
+            (
+               <View style={[styles.listBookWrap, { backgroundColor: color.surface }]}>
+                  {books.map((book: any, index: number) => (
+                     <ListBook
+                        key={index}
+                        title={book.title}
+                        onPress={() => navigation.navigate('UpdateBook', { selectedBook: books[index] })}
+                        remove={() => {
+                           setBook(books[index]);
+                           setIsRemoving(true);
+                        }}
+                     />
+                  ))}
+               </View>
+            )
+               : (
+                  <View style={styles.emptyTextWrap}>
+                     <Text style={[styles.emptyText, { color: color.divider }]}>List is empty</Text>
+                  </View>
+               )
+            }
          </View>
       </SafeAreaView >
    )
@@ -109,7 +123,7 @@ const styles = StyleSheet.create({
    },
 
 
-   // List book container
+   // List books container
    listBookContainer: {
       height: 'auto',
       width: '100%',
@@ -133,5 +147,16 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       paddingVertical: 3
       // borderWidth: 1
-   }
+   },
+
+   emptyTextWrap:{
+      height: '50%',
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center'
+   },
+   emptyText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+   },
 })

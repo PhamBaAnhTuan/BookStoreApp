@@ -1,12 +1,13 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react';
 // Context
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 // Icons
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-interface Props{
+
+interface Props {
    img: any,
    title: string,
    discount: number,
@@ -17,8 +18,12 @@ interface Props{
 }
 
 const ItemCart = (props: Props) => {
-   // Theme
-   const { theme } = useTheme();
+   // Context
+  const { useThemeSelector } = useAuth();
+  // Redux state
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
+
    const [checked, setChecked] = useState(true);
    const handleCheck = () => setChecked(checked ? false : true);
    // Handle amount
@@ -26,49 +31,49 @@ const ItemCart = (props: Props) => {
    const Increase = () => setAmount(amount + 1);
    const Decrease = () => setAmount(amount !== 1 ? amount - 1 : amount);
    return (
-      <View style={[styles.container, { backgroundColor: theme.white }]}>
+      <View style={[styles.container, { backgroundColor: color.surface }]}>
          <TouchableOpacity onPress={handleCheck}>
             {checked
-            ? <AntDesign name="checkcircleo" size={24} color="black" />
-            : <AntDesign name="checkcircle" size={24} color="green" />
+               ? <AntDesign name="checkcircleo" size={24} color={color.text} />
+               : <AntDesign name="checkcircle" size={24} color={color.success} />
             }
          </TouchableOpacity>
 
-         <Image style={styles.img} source={{uri: props.img}} />
+         <Image style={styles.img} source={{ uri: props.img }} />
 
          <View style={styles.itemIn4}>
-            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'black' }}>{props.title}</Text>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: color.text }}>{props.title}</Text>
 
             <View style={styles.discountContainer}>
                <View style={styles.discountWrap}>
-                  <Text style={{ fontSize: 11, fontWeight: 'bold', color: 'white' }}>{props.discount}% OFF</Text>
+                  <Text style={{ fontSize: 11, fontWeight: 'bold', color: color.text }}>{props.discount}% OFF</Text>
                </View>
 
-               { props.is_free &&
-                  <View style={[styles.freeShipWrap, { borderColor: 'green' }]}>
-                  <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'green' }}>FREE SHIP</Text>
-               </View>
+               {props.is_free &&
+                  <View style={[styles.freeShipWrap, { borderColor: color.green }]}>
+                     <Text style={{ fontSize: 10, fontWeight: 'bold', color: color.green }}>FREE SHIP</Text>
+                  </View>
                }
             </View>
 
             <View style={styles.priceContainer}>
                <Text style={styles.price}>${props.price}</Text>
 
-               <Text style={[styles.sold, { color: theme.text }]}>{props.sold} sold</Text>
+               <Text style={[styles.sold, { color: color.text }]}>{props.sold} sold</Text>
 
                <View style={styles.starContainer}>
-                  <Text style={[styles.sold, { color: theme.text }]}>{props.star ? props.star : '5.0'} </Text>
+                  <Text style={[styles.sold, { color: color.text }]}>{props.star ? props.star : '5.0'} </Text>
                   <AntDesign name="star" size={17} color="gold" />
                </View>
             </View>
 
-            <View style={styles.amountContainer}>
+            <View style={[styles.amountContainer, {borderColor: color.text}]}>
                <TouchableOpacity style={styles.icon} onPress={Decrease}>
-                  <Text style={{fontSize: 17, fontWeight: 'bold', color: 'black'}}>-</Text>
+                  <Text style={{ fontSize: 17, fontWeight: 'bold', color: color.text }}>-</Text>
                </TouchableOpacity>
-               <Text style={{paddingHorizontal: 5, color: 'black'}}>{amount}</Text>
+               <Text style={{ paddingHorizontal: 5, color: color.text }}>{amount}</Text>
                <TouchableOpacity style={styles.icon} onPress={Increase}>
-                  <Text style={{fontSize: 17, fontWeight: 'bold', color: 'black'}}>+</Text>
+                  <Text style={{ fontSize: 17, fontWeight: 'bold', color: color.text }}>+</Text>
                </TouchableOpacity>
             </View>
          </View>
@@ -150,29 +155,29 @@ const styles = StyleSheet.create({
       // paddingRight: 20
    },
 
-   price:{
+   price: {
       fontSize: 17,
       color: 'tomato',
       fontWeight: 'bold',
    },
-   sold:{
+   sold: {
       fontSize: 11,
       color: 'black'
    },
    // Star container
-   starContainer:{
+   starContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
    },
-   starIcon:{
+   starIcon: {
       height: 15,
       width: 15
    },
 
 
    // Amount container
-   amountContainer:{
+   amountContainer: {
       height: 'auto',
       width: 'auto',
       borderWidth: 1,
@@ -183,7 +188,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-around',
       // paddingHorizontal: 3,
    },
-   icon:{
+   icon: {
       height: 'auto',
       width: 25,
       alignItems: 'center',

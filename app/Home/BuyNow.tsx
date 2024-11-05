@@ -2,8 +2,6 @@ import { Dimensions, Image, KeyboardAvoidingView, ScrollView, StyleSheet, Text, 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
 // import { Picker } from '@react-native-picker/picker';
-// Context
-import { useTheme } from '../../context/ThemeContext';
 // Route get params
 import { useRoute } from "@react-navigation/native";
 // Components
@@ -12,10 +10,16 @@ import Header from '../../components/home/Header';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+// Context
+import { useAuth } from '../../context/AuthContext';
 
 const BuyNow = ({ navigation }) => {
-   // Theme
-   const { theme } = useTheme();
+   // Auth context
+  const { useAuthSelector, useThemeSelector } = useAuth();
+  // Redux state
+  const { isAuthenticated, user, accessToken, books } = useAuthSelector;
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
    // Route get params
    const route = useRoute();
    // const type = route.params?.type;
@@ -43,26 +47,26 @@ const BuyNow = ({ navigation }) => {
    const [name, setName] = useState('');
    const textChange = (text: string) => setName(text);
    return (
-      <SafeAreaView style={{ backgroundColor: theme.bgc, flex: 1 }}>
+      <SafeAreaView style={{ backgroundColor: color.background, flex: 1 }}>
          <Header
             onPress={() => navigation.goBack()}
          />
 
          <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-            <View style={[styles.itemIn4Container, { backgroundColor: theme.white }]}>
+            <View style={[styles.itemIn4Container, { backgroundColor: color.surface }]}>
                <Image style={styles.itemImg} source={{ uri: selectedBook.img ? selectedBook.img : 'https://dictionary.cambridge.org/vi/images/thumb/book_noun_001_01679.jpg?version=6.0.31' }} />
 
                <View style={styles.in4Container}>
-                  <Text style={[styles.itemName, { color: 'black' }]}>{selectedBook.title}</Text>
+                  <Text style={[styles.itemName, { color: color.onSurface }]}>{selectedBook.title}</Text>
                   {/* <Text style={[styles.brandName, { color: 'black' }]}>{selectedBook.brand}</Text> */}
 
                   <View style={styles.discountContainer}>
                      <View style={styles.discountWrap}>
-                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: 'white' }}>{selectedBook.discount}% OFF</Text>
+                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: color.onSurface }}>{selectedBook.discount}% OFF</Text>
                      </View>
                      {selectedBook.is_free ?
-                        (<View style={[styles.freeShipWrap, { borderColor: 'green' }]}>
-                           <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'green' }}>FREE SHIP</Text>
+                        (<View style={[styles.freeShipWrap, { borderColor: color.success }]}>
+                           <Text style={{ fontSize: 10, fontWeight: 'bold', color: color.success }}>FREE SHIP</Text>
                         </View>)
 
                         : null}
@@ -70,77 +74,77 @@ const BuyNow = ({ navigation }) => {
 
                   <View style={styles.priceContainer}>
                      <Text style={[styles.price, { color: 'tomato' }]}>{selectedBook.price}$</Text>
-                     <Text style={[styles.sold, { color: 'black' }]}>{selectedBook.rate} </Text>
+                     <Text style={[styles.sold, { color: color.onSurface }]}>{selectedBook.rate} </Text>
                      <AntDesign name="star" size={15} color="gold" />
                   </View>
 
-                  <View style={styles.amountContainer}>
+                  <View style={[styles.amountContainer, {borderColor: color.onSurface}]}>
                      <TouchableOpacity style={styles.increaseIcon} onPress={Decrease}>
-                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'black' }}>-</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: color.onSurface }}>-</Text>
                      </TouchableOpacity>
-                     <Text style={{ color: 'black' }}>{amount}</Text>
+                     <Text style={{ color: color.onSurface }}>{amount}</Text>
                      <TouchableOpacity style={styles.increaseIcon} onPress={Increase}>
-                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'black' }}>+</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: color.onSurface }}>+</Text>
                      </TouchableOpacity>
                   </View>
                </View>
             </View>
 
-            <View style={[styles.container, { backgroundColor: theme.white }]}>
+            <View style={[styles.container, { backgroundColor: color.surface }]}>
                <View style={styles.addressContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]}>Full name</Text>
-                  <TextInput style={styles.textInput} onChangeText={textChange} />
+                  <Text style={[styles.voucherText, { color: color.onSurface }]}>Full name</Text>
+                  <TextInput style={[styles.textInput, {color: color.onSurface}]} onChangeText={textChange} />
                </View>
                <View style={styles.addressContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]}>Address</Text>
-                  <TextInput style={styles.textInput} />
+                  <Text style={[styles.voucherText, { color: color.onSurface }]}>Address</Text>
+                  <TextInput style={[styles.textInput, {color: color.onSurface}]} />
                </View>
                <View style={styles.addressContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]}>Phone number</Text>
-                  <TextInput style={styles.textInput} keyboardType='number-pad' />
+                  <Text style={[styles.voucherText, { color: color.onSurface }]}>Phone number</Text>
+                  <TextInput style={[styles.textInput, {color: color.onSurface}]} keyboardType='number-pad' />
                </View>
             </View>
 
-            <View style={[styles.container, { backgroundColor: theme.white }]}>
+            <View style={[styles.container, { backgroundColor: color.surface  }]}>
 
                <TouchableOpacity style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Discount</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Discount</Text>
 
                   <View style={styles.voucherWrap}>
                      <View style={styles.discountWrap}>
-                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: 'white' }}>{selectedBook.discount}% OFF</Text>
+                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: color.onSurface }}>{selectedBook.discount}% OFF</Text>
                      </View>
                      {/* <MaterialIcons name="keyboard-arrow-right" size={24} color={'black'} /> */}
                   </View>
                </TouchableOpacity>
 
                <TouchableOpacity style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Free ship</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Free ship</Text>
 
                   <View style={styles.voucherWrap}>
-                     <View style={[styles.freeShipWrap, { borderColor: 'green' }]}>
-                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: 'green' }}>FREE SHIP</Text>
+                     <View style={[styles.freeShipWrap, { borderColor: color.success }]}>
+                        <Text style={{ fontSize: 11, fontWeight: 'bold', color: color.success }}>FREE SHIP</Text>
                      </View>
                      {/* <MaterialIcons name="keyboard-arrow-right" size={24} color={'black'} /> */}
                   </View>
                </TouchableOpacity>
 
                <TouchableOpacity style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Rate</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Rate</Text>
 
                   <View style={styles.voucherWrap}>
-                     <Text style={[styles.text, { color: 'black' }]}>{selectedBook.rate} </Text>
+                     <Text style={[styles.text, { color: color.onSurface }]}>{selectedBook.rate} </Text>
                      <AntDesign name="star" size={15} color="gold" />
                   </View>
                </TouchableOpacity>
             </View>
 
-            <View style={[styles.container, { backgroundColor: theme.white }]}>
+            <View style={[styles.container, { backgroundColor: color.surface  }]}>
                <View style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Buy method</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Buy method</Text>
                </View>
 
-               <View style={styles.picker}>
+               <View style={[styles.picker, {borderColor: color.onSurface}]}>
                   {/* <Picker
                      selectedValue={method}
                      // style={styles.picker}
@@ -171,10 +175,10 @@ const BuyNow = ({ navigation }) => {
                      </>
                   )
                } */}
-            <View style={[styles.leftContainer, { backgroundColor: theme.lightOrange }]}>
+            <View style={[styles.leftContainer, { backgroundColor: color.lightOrange }]}>
                <Text style={styles.price}>Total {totalPrice}$</Text>
             </View>
-            <TouchableOpacity style={[styles.buyBtn, { backgroundColor: theme.orange }]} >
+            <TouchableOpacity style={[styles.buyBtn, { backgroundColor: color.orange }]} >
                <Text style={styles.buyText}>Buy</Text>
             </TouchableOpacity>
          </View>

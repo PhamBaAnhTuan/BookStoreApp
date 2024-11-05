@@ -2,18 +2,14 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import React, { useState } from 'react';
 // Icons
 import Feather from 'react-native-vector-icons/Feather';
-// Context
-import { useTheme } from '../../context/ThemeContext';
 
 const SearchInput = () => {
-   // Theme
-   const {theme} = useTheme();
    // Handle search
-  const [search, setSearch] = useState('');
-  const handleSearchChange = (text:string) => setSearch(text);
-  const resetSearch = () => setSearch('');
+   const [search, setSearch] = useState('');
+   const handleSearchChange = (text: string) => setSearch(text);
+   const resetSearch = () => setSearch('');
    return (
-      <View style={[styles.searchContainer, { backgroundColor: theme.white, opacity: 0.9 }]}>
+      <View style={[styles.searchContainer, { backgroundColor: 'white', opacity: 0.9 }]}>
          <TouchableOpacity style={styles.icon}>
             <Feather name="search" size={23} color="black" />
          </TouchableOpacity>

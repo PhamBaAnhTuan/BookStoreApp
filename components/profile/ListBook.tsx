@@ -1,5 +1,7 @@
 import { Alert, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React from 'react';
+// Context
+import { useAuth } from '../../context/AuthContext';
 
 interface Props {
    onPress: any,
@@ -7,10 +9,16 @@ interface Props {
    remove: any
 }
 const ListBook = (props: Props) => {
+   // Context
+   const { useThemeSelector } = useAuth();
+   // Redux state
+   const {theme} = useThemeSelector;
+   const color = theme.colors;
+   
    return (
       <View style={styles.container}>
          <TouchableOpacity style={styles.wrapLeft} onPress={props.onPress}>
-            <Text style={styles.title}>{props.title}</Text>
+            <Text style={[styles.title, {color: color.onSurface}]}>{props.title}</Text>
          </TouchableOpacity>
          <TouchableOpacity style={styles.wrapRight} onPress={props.remove}>
             <Text style={styles.text}>Remove</Text>

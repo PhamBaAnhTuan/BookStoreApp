@@ -1,72 +1,47 @@
 import { Dimensions, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 // Context
-import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 // Icons
-import Feather from 'react-native-vector-icons/Feather'
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Feather from 'react-native-vector-icons/Feather';
+// Action
+import { signUpAction } from './redux/reducer/authActions';
 
 const SignUp = ({ navigation }) => {
-  // Theme
-  const { theme } = useTheme();
-  // Handle icon eye
+  // Auth context
+  const {
+    userName, setUserName, password, setPassword, dispatch, resetAuth,
+    useAuthSelector, useThemeSelector
+  } = useAuth();
+  // Redux state
+  const { signedUpDone } = useAuthSelector;
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
+  // Handle hide password
   const [icon, setIcon] = useState('eye');
   const [isHide, setIsHide] = useState(true);
-
   const handleIconEye = () => {
     setIcon(icon === "eye" ? "eye-off" : "eye");
     setIsHide(!isHide);
   };
-  // Auth
-  const {
-    signUp, isAuthenticated, setIsAuthenticated,
-    email, setEmail, username, setUsername, password, setPassword
-  } = useAuth();
-  const [isLogin, setIsLogin] = useState(false);
   // Handle email change
-  const handleEmailChange = (text: string) => setEmail(text);
-  const handleUsernameChange = (text: string) => setUsername(text);
+  const handleUserNameChange = (text: string) => setUserName(text);
   const handlePasswordChange = (text: string) => setPassword(text);
   // Handle sign up
-  useEffect(() => {
-    if(isLogin) {
-      signUpMethod();
-      if(isAuthenticated) {
-        navigation.replace('TabNavigator');
-      }
-      else{
-        return;
-      }
-      setIsLogin(false);
-    }
-  }, [isLogin, isAuthenticated]); 
-  const signUpMethod = async () => {
-    if (!email && !username && !password) {
-      ToastAndroid.show('Enter Full name and Password!', ToastAndroid.SHORT);
-      return;
-    } if (!email) {
-      ToastAndroid.show('Enter Email!', ToastAndroid.SHORT);
-      return;
-    } if (!username) {
-      ToastAndroid.show('Enter User name!', ToastAndroid.SHORT);
-      return;
-    } if (!password) {
-      ToastAndroid.show('Enter Password!', ToastAndroid.SHORT);
-      return;
-    }
-    try {
-      await signUp(email, username, password);
-    } catch (error) {
-      console.log('Sign up error: ', error);
-    }
-    setEmail('');
-    setUsername('');
-    setPassword('');
-    setIsLogin(false);
+  // Handle sign in
+  const handleSignUp = () => {
+    dispatch(signUpAction(userName, password, resetAuth));
   };
+  useEffect(() => {
+    if (signedUpDone === true) {
+      navigation.replace('SignIn');
+      ToastAndroid.show('Sign up successful!', ToastAndroid.SHORT);
+    }
+  }, [signedUpDone]);
+
   return (
-    <SafeAreaView style={{ backgroundColor: theme.orange, flex: 1, justifyContent: 'space-between' }}>
+    <SafeAreaView style={{ backgroundColor: color.orange, flex: 1, justifyContent: 'space-between' }}>
 
       <View style={styles.logoContainer}>
         <Image source={require('../assets/images/logo2.png')} resizeMode='contain' />
@@ -76,36 +51,28 @@ const SignUp = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <View style={styles.inputWrap}>
-          <Text style={[styles.emailText, { color: 'black' }]}>Email</Text>
-          <TextInput style={[styles.emailInput, { backgroundColor: theme.white, color: 'black' }]}
-            keyboardType='email-address'
-            value={email}
-            onChangeText={handleEmailChange}
-          />
-        </View>
 
         <View style={styles.inputWrap}>
           <Text style={[styles.emailText, { color: 'black' }]}>User Name</Text>
-          <TextInput style={[styles.emailInput, { backgroundColor: theme.white, color: 'black' }]}
-            value={username}
-            onChangeText={handleUsernameChange}
+          <TextInput style={[styles.emailInput, { backgroundColor: color.divider, color: color.onSurface }]}
+            value={userName}
+            onChangeText={handleUserNameChange}
           />
         </View>
 
         <View style={styles.inputWrap}>
           <Text style={[styles.emailText, { color: 'black' }]}>Password</Text>
-          <View style={[styles.passwordInputContainer, { backgroundColor: theme.white }]}>
-            <TextInput style={[styles.passwordInput, { backgroundColor: theme.white, color: 'black' }]}
+          <View style={[styles.passwordInputContainer, { backgroundColor: color.white }]}>
+            <TextInput style={[styles.passwordInput, { backgroundColor: color.divider, color: color.onSurface }]}
               secureTextEntry={isHide}
               value={password}
               onChangeText={handlePasswordChange}
             />
             <TouchableOpacity
-              style={styles.eyeIcon}
+              style={[styles.eyeIcon, {backgroundColor: color.divider}]}
               onPress={handleIconEye}
             >
-              <Feather name={icon} size={23} color="black" />
+              <Feather name={icon} size={23} color={color.onSurface} />
             </TouchableOpacity>
           </View>
         </View>
@@ -113,14 +80,14 @@ const SignUp = ({ navigation }) => {
       </View>
 
       <View style={styles.signUpBtnContainer}>
-        <TouchableOpacity style={[styles.signUpBtn, { backgroundColor: theme.green }]} onPress={() => setIsLogin(true)}>
+        <TouchableOpacity style={[styles.signUpBtn, { backgroundColor: color.success }]} onPress={handleSignUp}>
           <Text style={styles.signUpText}>Create Account</Text>
         </TouchableOpacity>
 
         <View style={styles.orContainer}>
-          <View style={{ height: 1, width: '35%', backgroundColor: theme.bgc }}></View>
-          <Text style={{ fontSize: 15, fontWeight: 'bold', color: theme.bgc }}>Or</Text>
-          <View style={{ height: 1, width: '35%', backgroundColor: theme.bgc }}></View>
+          <View style={{ height: 1, width: '35%', backgroundColor: color.surface }}></View>
+          <Text style={{ fontSize: 15, fontWeight: 'bold', color: color.surface }}>Or</Text>
+          <View style={{ height: 1, width: '35%', backgroundColor: color.surface }}></View>
         </View>
 
         <View style={styles.otherMethodIcon}>
@@ -131,8 +98,8 @@ const SignUp = ({ navigation }) => {
 
         <View style={styles.otherMethodContainer}>
           <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'black' }}>Have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-            <Text style={{ fontSize: 13, fontWeight: 'bold', color: theme.green }}>Sign in</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('SignIn', resetAuth())}>
+            <Text style={{ fontSize: 13, fontWeight: 'bold', color: color.success }}>Sign in</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -202,7 +169,8 @@ const styles = StyleSheet.create({
   passwordInput: {
     height: '100%',
     width: '85%',
-    borderRadius: 5,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
     paddingLeft: 10
   },
   eyeIcon: {
@@ -210,6 +178,8 @@ const styles = StyleSheet.create({
     width: '15%',
     alignItems: 'center',
     justifyContent: 'center',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
   },
 
 

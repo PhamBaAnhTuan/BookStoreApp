@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react';
 // Context
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface Props {
    icon: any,
@@ -9,14 +9,17 @@ interface Props {
    onPress: any
 }
 const TypeCard = (props: Props) => {
-   // Theme
-   const {theme} = useTheme();
+   // Context
+   const { useThemeSelector } = useAuth();
+   // Redux state
+   const { theme } = useThemeSelector;
+   const color = theme.colors;
    return (
       <TouchableOpacity style={styles.container} onPress={props.onPress}>
          <View style={styles.imgContainer}>
             <Image style={styles.icon} source={{uri: props.icon}}/>
          </View>
-         <Text style={[styles.text, {color: theme.text}]}>{props.typeName}</Text>
+         <Text style={[styles.text, {color: color.text}]}>{props.typeName}</Text>
       </TouchableOpacity>
    )
 }

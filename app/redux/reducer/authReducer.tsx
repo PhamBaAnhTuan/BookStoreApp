@@ -1,40 +1,71 @@
-
 const initialState = {
-   isSignedIn: false,
-   accessToken: null,
+   isAuthenticated: false,
    user: null,
+   accessToken: null,
+   books: [],
+   signedUpDone: false
 }
-
-
 export const authReducer = (state = initialState, action: any) => {
 
    switch (action.type) {
-      case 'signIn':
+      case 'SIGN_IN':
          return {
             ...state,
-            isSignedIn: true,
-            user: action.payload.user_data.email,
+            isAuthenticated: true,
+            user: action.payload.user_data,
             accessToken: action.payload.access_token,
          }
-      case 'signUp':
-         return {
-            ...state,
-            isSignedIn: action.payload
-         }
 
-      case 'signOut':
+      case 'SIGN_UP':
          return {
             ...state,
-            isSignedIn: false
+            signedUpDone: action.payload
          }
-
-      case 'getBook':
+      case 'SIGN_OUT':
          return {
             ...state,
-            userBooks: action.payload,
+            isAuthenticated: action.payload,
+            user: null,
+            accessToken: null
+         }
+      case 'GET_USER_PROFILE':
+         return {
+            ...state,
+            user: { ...state.user, ...action.payload }
+         }
+      case 'UPDATE_USER_PROFILE':
+         return {
+            ...state,
+            user: { ...state.user, ...action.payload }
+         }
+      case 'GET_BOOKS':
+         return {
+            ...state,
+            books: action.payload,
+         }
+      case 'ADD_BOOK':
+         return {
+            ...state,
+            books: [...state.books, action.payload]
+         }
+      case 'UPDATE_BOOK':
+         return {
+            ...state,
+            books: state.books.map(book =>
+               book.id === action.payload.id ? action.payload : book
+            ),
+         }
+      case 'DELETE_BOOK':
+         return {
+            ...state,
+            books: state.books.filter(book => book.id !== action.payload)
+         }
+      case 'UPDATE_USER':
+         return {
+            ...state,
+            user: action.payload
          }
       default:
          return state
    }
 }
-

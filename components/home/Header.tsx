@@ -4,16 +4,19 @@ import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 // Context
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
-interface Props{
+interface Props {
    onPress: any,
 }
 const Header = (props: Props) => {
-   // Theme
-   const {theme} = useTheme();
+   // Auth context
+   const { useThemeSelector } = useAuth();
+   // Redux state
+   const { theme } = useThemeSelector;
+   const color = theme.colors;
    return (
-      <View style={[styles.header, { backgroundColor: theme.orange }]}>
+      <View style={[styles.header, { backgroundColor: color.orange }]}>
          <TouchableOpacity style={styles.icon} onPress={props.onPress} >
             <Ionicons name="arrow-back" size={21} color="white" />
          </TouchableOpacity>

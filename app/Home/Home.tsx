@@ -2,10 +2,10 @@ import { Dimensions, Image, KeyboardAvoidingView, ScrollView, StatusBar, StyleSh
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// Theme context
-import { useTheme } from '../../context/ThemeContext';
-import { useData } from '../../context/DataContext';
+// Context
 import { useAuth } from '../../context/AuthContext';
+// Action
+import { getUserProfile } from '../redux/reducer/authActions';
 // Icons
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -13,42 +13,63 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import TypeCard from '../../components/home/TypeCard';
 import ItemCard from '../../components/home/ItemCard';
 import SearchInput from '../../components/search/SearchInput';
+import NavBar from '../../components/home/NavBar';
 
 const Home = ({ navigation }) => {
-  // Theme
-  const { theme } = useTheme();
-  // Data
-  const { books } = useData();
-  const {isAuthenticated, setIsAuthenticated, user} = useAuth();
-  const log = () => console.log('User: ', user, '| Is authenticated: ', isAuthenticated)
+  // Context
+  const { dispatch, useAuthSelector, useThemeSelector } = useAuth();
+  // Redux state
+  const { isAuthenticated, user, accessToken, books } = useAuthSelector;
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
+  // Effect
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getUserProfile(user.id, accessToken));
+      console.log('home get profile');
+    }
+  }, [isAuthenticated])
+
+  const log = () => console.log(
+    'User: ', user?.username,
+    '| Is authenticated: ', isAuthenticated,
+    '| accessToken: ', accessToken,
+    '| Is Admin: ', user?.is_superuser,
+    '| Profile: ', user
+  )
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: theme.bgc}}>
-      <StatusBar backgroundColor={theme.orange} />
-      <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
-        <View style={[styles.header, { backgroundColor: theme.orange }]}>
-          <View style={styles.searchContainer}>
-            <SearchInput/>
-          </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>
+      <StatusBar backgroundColor={color.orange} />
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
 
-          <View style={styles.headerRight}>
-            <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('Cart')}>
-              <Ionicons name="bag-outline" size={24} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.icon} onPress={log}>
-              <Ionicons name="chatbubble-outline" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <NavBar
+          children={
+            <>
+              <View style={styles.searchContainer}>
+                <SearchInput />
+              </View>
 
-        <Text style={[styles.itemCardTitle, { color: theme.text }]}>Category</Text>
+              <View style={styles.headerRight}>
+                <TouchableOpacity style={styles.icon} onPress={() => navigation.navigate('Cart')}>
+                  <Ionicons name="bag-outline" size={24} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.icon} onPress={log}>
+                  <Ionicons name="chatbubble-outline" size={24} color="white" />
+                </TouchableOpacity>
+              </View>
+            </>
+          }
+        />
+
+        <Text style={[styles.itemCardTitle, { color: color.text }]}>Category</Text>
         <View style={[styles.categoryContainer]}>
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-            {books.map((book:any, index:number) =>(
+            {books.map((book: any, index: number) => (
               <TypeCard
                 key={index}
                 icon={book.img ? book.img : 'https://cdn-icons-png.flaticon.com/128/207/207114.png'}
-                typeName={book.type}
+                typeName={book?.title}
                 onPress={null}
               />
             ))}
@@ -56,18 +77,18 @@ const Home = ({ navigation }) => {
         </View>
 
         <View style={styles.itemCardContainer}>
-          <Text style={[styles.itemCardTitle, { color: theme.text }]}>Recommended daily</Text>
+          <Text style={[styles.itemCardTitle, { color: color.text }]}>Recommended daily</Text>
           <View style={styles.itemCardWrap}>
             {books.map((book: any, index: number) => (
               <ItemCard
                 key={index}
                 onPress={() => navigation.navigate('BookDetail', { selectedBook: books[index] })}
-                itemImg={book.img ? book.img : 'https://dictionary.cambridge.org/vi/images/thumb/book_noun_001_01679.jpg?version=6.0.31'}
-                itemName={book.title}
-                discount={book.discount}
-                is_free={book.is_free}
-                price={book.price}
-                star={book.rate}
+                itemImg={book?.img ? book.img : 'https://dictionary.cambridge.org/vi/images/thumb/book_noun_001_01679.jpg?version=6.0.31'}
+                itemName={book?.title}
+                discount={book?.discount}
+                is_free={book?.free_ship}
+                price={book?.price}
+                star={book?.rate}
               />
             ))}
           </View>
@@ -81,18 +102,7 @@ const Home = ({ navigation }) => {
 export default Home;
 
 const styles = StyleSheet.create({
-  // Header
-  header: {
-    height: 100,
-    width: '100%',
-    // borderWidth: 1,
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-
+  // Search container
   searchContainer: {
     height: 'auto',
     width: '80%',

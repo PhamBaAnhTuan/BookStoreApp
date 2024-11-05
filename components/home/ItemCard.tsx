@@ -1,11 +1,11 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react';
 // Context
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 // Icons
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-interface Props{
+interface Props {
    onPress: any,
    itemImg: any,
    itemName: string,
@@ -16,33 +16,36 @@ interface Props{
 }
 
 const ItemCard = (props: Props) => {
-   // Theme
-   const { theme } = useTheme();
+   // Context
+  const { useThemeSelector } = useAuth();
+  // Redux state
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
    return (
-      <TouchableOpacity style={[styles.container, {backgroundColor: theme.white}]} onPress={props.onPress}>
+      <TouchableOpacity style={[styles.container, { backgroundColor: color.surface }]} onPress={props.onPress}>
          <View style={styles.itemImgContainer}>
-         <Image style={styles.itemImg} source={{uri: props.itemImg}} />
+            <Image style={styles.itemImg} source={{ uri: props.itemImg }} />
          </View>
 
          <View style={styles.in4Container}>
-            <Text style={[styles.itemName, { color: 'black' }]}>{props.itemName}</Text>
+            <Text style={[styles.itemName, { color: color.onSurface }]}>{props.itemName}</Text>
 
             <View style={styles.discountContainer}>
                <View style={styles.discountWrap}>
-                  <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'white' }}>{props.discount}% OFF</Text>
+                  <Text style={{ fontSize: 10, fontWeight: 'bold', color: color.onSurface }}>{props.discount}% OFF</Text>
                </View>
 
                {props.is_free &&
-                  <View style={[styles.freeShipWrap, {borderColor: 'green'}]}>
-                  <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'green' }}>FREE SHIP</Text>
-               </View>
+                  <View style={[styles.freeShipWrap, { borderColor: color.success }]}>
+                     <Text style={{ fontSize: 10, fontWeight: 'bold', color: color.success }}>FREE SHIP</Text>
+                  </View>
                }
             </View>
 
             <View style={styles.priceContainer}>
                <Text style={styles.price}>{props.price}$</Text>
-               <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                  <Text style={[styles.sold, {color: 'black'}]}>{props.star ? props.star : '5.0'} </Text>
+               <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
+                  <Text style={[styles.sold, { color: color.onSurface }]}>{props.star ? props.star : '5.0'} </Text>
                   <AntDesign name="star" size={15} color="gold" />
                </View>
             </View>
@@ -65,7 +68,7 @@ const styles = StyleSheet.create({
    },
 
 
-   itemImgContainer:{
+   itemImgContainer: {
       height: 200,
       width: '97%',
       alignSelf: 'center',
@@ -142,12 +145,12 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between'
    },
 
-   price:{
+   price: {
       fontSize: 15,
       color: 'tomato',
       fontWeight: 'bold'
    },
-   sold:{
+   sold: {
       fontSize: 12,
       color: 'black'
    }

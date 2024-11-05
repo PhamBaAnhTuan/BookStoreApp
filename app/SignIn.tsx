@@ -2,28 +2,45 @@ import { Dimensions, Image, KeyboardAvoidingView, StatusBar, StyleSheet, Text, T
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 // Context
-import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 // Icons
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from './redux/store/store';
-
-import { signInAction, signOut } from './redux/reducer/authActions';
+// Redux actions
+import { signInAction, getBooksAction, getUserProfile } from './redux/reducer/authActions';
 
 const SignIn = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const { isSignedIn, user, accessToken } = useSelector((state: RootState) => state.auth);
-
+  // Context
+  const { dispatch, useAuthSelector, useThemeSelector,
+    userName, setUserName, password, setPassword, resetAuth,
+  } = useAuth();
+  // Redux state
+  const { isAuthenticated, user, accessToken, books } = useAuthSelector;
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
+  // Handle change
+  const handleUsernameChange = (text: string) => setUserName(text);
+  const handlePasswordChange = (text: string) => setPassword(text);
+  // Handle sign in
   const handleSignIn = () => {
-    dispatch(signInAction(userName, password));
+    dispatch(signInAction(userName, password, resetAuth));
   };
 
-  // Theme
-  const { theme } = useTheme();
-  // Handle icon eye
+  useEffect(() => {
+    if (isAuthenticated === true) {
+      if (books) {
+        dispatch(getBooksAction());
+      }
+      navigation.replace('TabNavigator');
+      ToastAndroid.show('Sign in successful!', ToastAndroid.SHORT);
+      console.log('sign in get book')
+    }
+  }, [isAuthenticated])
+
+  // Handle hide password
   const [icon, setIcon] = useState("eye");
   const [isHide, setIsHide] = useState(true);
   const handleIconEye = () => {
@@ -35,16 +52,15 @@ const SignIn = ({ navigation }) => {
   const toggleRmbMe = () => {
     rememberMe == 'check-box-outline-blank' ? setRememberMe('check-box') : setRememberMe('check-box-outline-blank')
   }
-  // State
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('');
-  // Handle change
-  const handleUsernameChange = (text:string) => setUserName(text);
-  const handlePasswordChange = (text:string) => setPassword(text);
-  const log = () => console.log('Is loged in: ', isSignedIn, '| user data:', user, '|accessToken: ', accessToken)
+
+  const log = () => console.log(
+    'User: ', user?.username,
+    '| Is authenticated: ', isAuthenticated,
+    '| accessToken: ', accessToken,
+  )
   return (
-    <SafeAreaView style={{ backgroundColor: theme.orange, flex: 1, justifyContent: 'space-between' }}>
-      <StatusBar backgroundColor={'#ff7233'} />
+    <SafeAreaView style={{ backgroundColor: color.orange, flex: 1, justifyContent: 'space-between' }}>
+      <StatusBar backgroundColor={color.orange} />
       <View style={styles.logoContainer}>
         <Image source={require('../assets/images/logo2.png')} resizeMode='cover' />
       </View>
@@ -55,52 +71,49 @@ const SignIn = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <View style={styles.inputWrap}>
           <Text style={[styles.emailText, { color: 'black' }]}>User Name</Text>
-          <TextInput style={[styles.emailInput, { backgroundColor: theme.white, color: 'black' }]}
-          value={userName}
-          onChangeText={handleUsernameChange}
+          <TextInput style={[styles.emailInput, { backgroundColor: color.divider, color: color.onSurface }]}
+            value={userName}
+            onChangeText={handleUsernameChange}
           />
         </View>
 
         <View style={styles.inputWrap}>
           <Text style={[styles.emailText, { color: 'black' }]}>Password</Text>
-          <View style={[styles.passwordInputContainer, { backgroundColor: theme.white }]}>
-            <TextInput style={[styles.passwordInput, { backgroundColor: theme.white, color: 'black' }]}
+          <View style={[styles.passwordInputContainer, { backgroundColor: color.white }]}>
+            <TextInput style={[styles.passwordInput, { backgroundColor: color.divider, color: color.onSurface }]}
               secureTextEntry={isHide}
-            value={password}
-            onChangeText={handlePasswordChange}
+              value={password}
+              onChangeText={handlePasswordChange}
             />
             <TouchableOpacity
-              style={styles.eyeIcon}
+              style={[styles.eyeIcon, {backgroundColor: color.divider}]}
               onPress={handleIconEye}
             >
-              <Feather name={icon} size={23} color="black" />
+              <Feather name={icon} size={23} color={color.onSurface} />
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.forgotPasswordContainer}>
-          <TouchableOpacity onPress={log} style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={toggleRmbMe} style={{ flexDirection: 'row', alignItems: 'center' }}>
             <MaterialIcons name={rememberMe} size={24} color="black" />
             <Text style={{ fontSize: 12, color: 'black' }}>Remember me</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {
-            dispatch(signOut())
-            console.log('logout:', isSignedIn)
-          }}>
+          <TouchableOpacity onPress={log}>
             <Text style={{ fontSize: 12, color: 'black' }}>Forgot password?</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.signInBtnContainer}>
-        <TouchableOpacity style={[styles.signInBtn, { backgroundColor: theme.green }]} onPress={handleSignIn} >
+        <TouchableOpacity style={[styles.signInBtn, { backgroundColor: color.success }]} onPress={handleSignIn} >
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
 
         <View style={styles.otherMethodContainer}>
           <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'black' }}>Not a member? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-            <Text style={{ fontSize: 13, fontWeight: 'bold', color: theme.green }}>Sign up</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('SignUp', resetAuth())}>
+            <Text style={{ fontSize: 13, fontWeight: 'bold', color: color.success }}>Sign up</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -166,7 +179,8 @@ const styles = StyleSheet.create({
   passwordInput: {
     height: '100%',
     width: '85%',
-    borderRadius: 5,
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
     paddingLeft: 10
   },
   eyeIcon: {
@@ -174,6 +188,8 @@ const styles = StyleSheet.create({
     width: '15%',
     alignItems: 'center',
     justifyContent: 'center',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
   },
 
 

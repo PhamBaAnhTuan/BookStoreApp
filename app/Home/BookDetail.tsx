@@ -1,17 +1,23 @@
 import { Image, ScrollView, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import React, { useState } from 'react';
-// Theme
-import { useTheme } from '../../context/ThemeContext';
+// Route to params
 import { useRoute } from '@react-navigation/native';
 // Icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+// Context
+import { useAuth } from '../../context/AuthContext';
 
 const BookDetail = ({ navigation }) => {
-   const { theme } = useTheme();
+   // Auth context
+  const { useAuthSelector, useThemeSelector } = useAuth();
+  // Redux state
+  const { isAuthenticated, user, accessToken, books } = useAuthSelector;
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
    // Route get params
    const route = useRoute();
    const selectedBook = route.params?.selectedBook;
@@ -24,106 +30,106 @@ const BookDetail = ({ navigation }) => {
    }
    const addToCart = () => ToastAndroid.show('Add to Cart', ToastAndroid.SHORT);
    return (
-      <SafeAreaView style={{backgroundColor: theme.bgc, flex: 1}}>
+      <SafeAreaView style={{ backgroundColor: color.background, flex: 1 }}>
          <ScrollView showsVerticalScrollIndicator={false}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backIcon, { backgroundColor: theme.white }]}>
-               <Ionicons name="arrow-back" size={21} color="black" />
+            <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backIcon, { backgroundColor: color.surface }]}>
+               <Ionicons name="arrow-back" size={21} color={color.onSurface} />
             </TouchableOpacity>
 
             <View style={styles.imgContainer}>
                <Image style={styles.itemImg} source={{ uri: selectedBook.img ? selectedBook.img : 'https://dictionary.cambridge.org/vi/images/thumb/book_noun_001_01679.jpg?version=6.0.31' }} />
             </View>
 
-            <View style={[styles.in4Container, { backgroundColor: theme.white }]}>
+            <View style={[styles.in4Container, { backgroundColor: color.surface }]}>
                <View style={styles.voucherContainer}>
-                  <Text style={[styles.itemName, { color: 'black' }]}>{selectedBook.title}</Text>
+                  <Text style={[styles.itemName, { color: color.onSurface }]}>{selectedBook.title}</Text>
                </View>
             </View>
 
-            <View style={[styles.in4Container, { backgroundColor: theme.white }]}>
+            <View style={[styles.in4Container, { backgroundColor: color.surface }]}>
                <View style={styles.voucherContainer}>
                   <Text style={styles.price}>{selectedBook.price}$</Text>
-                  <Text style={[styles.text, { color: 'black', paddingRight: 5 }]}>{selectedBook.rate} Star</Text>
+                  <Text style={[styles.text, { color: color.onSurface, paddingRight: 5 }]}>{selectedBook.rate} Star</Text>
                </View>
 
                <TouchableOpacity style={styles.brandContainer}>
                   <TouchableOpacity >
-                     <Text style={[styles.brandName, { color: 'black' }]} >
+                     <Text style={[styles.brandName, { color: color.onSurface }]} >
                         {/* {selectedBook.brand} */}
                         {selectedBook.author}
                      </Text >
                   </TouchableOpacity>
 
-                  <TouchableOpacity style={[styles.flBtn, { borderColor: 'black' }]} onPress={handleFollow} >
-                     <Text style={{ color: 'black', fontSize: 11 }} >{follow}</Text>
+                  <TouchableOpacity style={[styles.flBtn, { borderColor: color.onSurface }]} onPress={handleFollow} >
+                     <Text style={{ color: color.onSurface, fontSize: 11 }} >{follow}</Text>
                   </TouchableOpacity>
                </TouchableOpacity>
 
                <TouchableOpacity style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Type</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Type</Text>
 
                   <View style={styles.voucherWrap}>
-                     <Text style={[styles.text, { color: 'black' }]}>{selectedBook.type}</Text>
+                     <Text style={[styles.text, { color: color.onSurface }]}>{selectedBook.type}</Text>
                   </View>
                </TouchableOpacity>
 
                <TouchableOpacity style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Discount</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Discount</Text>
 
                   <View style={styles.voucherWrap}>
                      <View style={styles.discountWrap}>
-                        <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'white' }}>{selectedBook.discount}% OFF</Text>
+                        <Text style={{ fontSize: 10, fontWeight: 'bold', color: color.onSurface }}>{selectedBook.discount}% OFF</Text>
                      </View>
                      {/* <MaterialIcons name="keyboard-arrow-right" size={24} color={'black'} /> */}
                   </View>
                </TouchableOpacity>
 
                <TouchableOpacity style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Free ship</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Free ship</Text>
 
                   <View style={styles.voucherWrap}>
-                     <View style={[styles.freeShipWrap, { borderColor: 'green' }]}>
-                        <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'green' }}>FREE SHIP</Text>
+                     <View style={[styles.freeShipWrap, { borderColor: color.success }]}>
+                        <Text style={{ fontSize: 10, fontWeight: 'bold', color: color.success }}>FREE SHIP</Text>
                      </View>
                      {/* <MaterialIcons name="keyboard-arrow-right" size={24} color={'black'} /> */}
                   </View>
                </TouchableOpacity>
 
                <TouchableOpacity style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Rate</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Rate</Text>
 
                   <View style={styles.voucherWrap}>
-                     <Text style={[styles.text, { color: 'black' }]}>{selectedBook.rate} </Text>
+                     <Text style={[styles.text, { color: color.onSurface }]}>{selectedBook.rate} </Text>
                      <AntDesign name="star" size={17} color="gold" />
                   </View>
                </TouchableOpacity>
 
             </View>
 
-            <View style={[styles.in4Container, { backgroundColor: theme.white }]}>
+            <View style={[styles.in4Container, { backgroundColor: color.surface }]}>
                <View style={styles.voucherContainer}>
-                  <Text style={[styles.voucherText, { color: 'black' }]} >Description</Text>
+                  <Text style={[styles.voucherText, { color: color.onSurface }]} >Description</Text>
                </View>
 
-               <Text style={{ textAlign: 'justify' }}>{selectedBook.description}</Text>
+               <Text style={{ textAlign: 'justify', color: color.onSurface }}>{selectedBook.description}</Text>
             </View>
          </ScrollView>
 
          <View style={styles.buyBtnContainer}>
-            <View style={[styles.leftContainer, { backgroundColor: theme.lightOrange }]}>
+            <View style={[styles.leftContainer, { backgroundColor: color.lightOrange }]}>
                <TouchableOpacity
-                  style={[styles.chatIcon, { borderColor: theme.gray }]}
+                  style={[styles.chatIcon, { borderColor: color.gray }]}
                // onPress={() => navigation.navigate('BuyNow')}
                >
                   <Ionicons name="gift-outline" size={25} color='white' />
                </TouchableOpacity>
 
-               <TouchableOpacity style={[styles.cartIcon, { borderColor: theme.gray }]} onPress={addToCart} >
+               <TouchableOpacity style={[styles.cartIcon, { borderColor: color.gray }]} onPress={addToCart} >
                   <Ionicons name="bag-add-outline" size={25} color="white" />
                </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={[styles.buyBtn, { backgroundColor: theme.orange }]} onPress={() => navigation.navigate('BuyNow', { selectedBook: selectedBook })}>
+            <TouchableOpacity style={[styles.buyBtn, { backgroundColor: color.orange }]} onPress={() => navigation.navigate('BuyNow', { selectedBook: selectedBook })}>
                <Text style={styles.buyText}>Buy now</Text>
             </TouchableOpacity>
          </View>
@@ -155,7 +161,7 @@ const styles = StyleSheet.create({
       left: 10,
       zIndex: 1
    },
-   menuIcon:{
+   menuIcon: {
       height: 'auto',
       width: 'auto',
       padding: 3,
