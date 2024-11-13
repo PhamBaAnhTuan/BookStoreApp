@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react';
 // Context
-import { useTheme } from '../../context/ThemeContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface Props {
    icon: any,
@@ -9,14 +9,17 @@ interface Props {
    onPress: any
 }
 const TypeCard = (props: Props) => {
-   // Theme
-   const {theme} = useTheme();
+   // Context
+   const { useThemeSelector } = useAuth();
+   // Redux state
+   const { theme } = useThemeSelector;
+   const color = theme.colors;
    return (
       <TouchableOpacity style={styles.container} onPress={props.onPress}>
-         <View style={styles.imgContainer}>
-            <Image style={styles.icon} source={props.icon}/>
+         <View style={[styles.imgContainer, {backgroundColor: color.surface}]}>
+            <Image style={styles.icon} source={{uri: props.icon}}/>
          </View>
-         <Text style={[styles.text, {color: theme.text}]}>{props.typeName}</Text>
+         <Text style={[styles.text, {color: color.text}]}>{props.typeName}</Text>
       </TouchableOpacity>
    )
 }
@@ -29,29 +32,30 @@ const styles = StyleSheet.create({
       width: 60,
       // borderWidth: 1,
       alignItems: 'center',
-      marginHorizontal: 6,
-      // marginTop: 10
+      marginHorizontal: 5,
    },
 
    imgContainer:{
-      height: 50,
-      width: 50,
-      borderWidth: 1,
-      borderRadius: 10,
-      borderColor: 'gray',
+      height: 60,
+      width: 60,
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      borderRadius: 10,
    },
 
    icon:{
-      height: 40,
-      width: 40,
-      resizeMode: 'cover'
+      height: 50,
+      width: 50,
+      borderRadius: 10,
+      resizeMode: 'cover',
    },
 
    text:{
+      width: '100%',
       fontSize: 12,
-      fontWeight: 'bold',
-      color: 'black'
+      fontWeight: '600',
+      color: 'black',
+      textAlign: 'center',
+      // borderWidth: 1
    }
 })

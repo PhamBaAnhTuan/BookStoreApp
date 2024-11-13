@@ -1,8 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react';
 // Theme context
-import { useTheme } from '../../context/ThemeContext';
-
+import { useAuth } from '../../context/AuthContext';
 
 interface Props{
    category: string,
@@ -10,11 +9,14 @@ interface Props{
 }
 
 const CategoryCard = (props: Props) => {
-   // Theme
-  const { theme } = useTheme();
+   // Context
+  const { useThemeSelector } = useAuth();
+  // Redux state
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
    return (
-      <TouchableOpacity style={[styles.container, {borderColor: theme.text}]} onPress={props.onPress}>
-         <Text style={[styles.text, {color: theme.text}]}>{props.category}</Text>
+      <TouchableOpacity style={[styles.container, {backgroundColor: color.surface}]} onPress={props.onPress}>
+         <Text style={[styles.text, {color: color.onSurface}]}>{props.category}</Text>
       </TouchableOpacity>
    )
 }
@@ -23,10 +25,10 @@ export default CategoryCard
 
 const styles = StyleSheet.create({
    container: {
-      height: 30,
+      height: 35,
       width: 'auto',
-      borderWidth: 1,
-      borderRadius: 5,
+      // borderWidth: 1,
+      borderRadius: 10,
       paddingHorizontal: 15,
       alignItems: 'center',
       justifyContent: 'center',

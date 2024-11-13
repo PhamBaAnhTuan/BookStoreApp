@@ -1,59 +1,105 @@
-import { Dimensions, Image, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React from 'react';
+import { Dimensions, Image, KeyboardAvoidingView, StyleSheet, Text, TextInput, ToastAndroid, TouchableOpacity, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from 'react';
 // Context
-import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
+// Icons
+import Feather from 'react-native-vector-icons/Feather';
+// Action
+import { signUpAction } from './redux/reducer/authActions';
 
 const SignUp = ({ navigation }) => {
-  const {theme} = useTheme();
+  // Auth context
+  const {
+    userName, setUserName, password, setPassword, dispatch, resetAuth,
+    useAuthSelector, useThemeSelector
+  } = useAuth();
+  // Redux state
+  const { isAuthenticated } = useAuthSelector;
+  const { theme } = useThemeSelector;
+  const color = theme.colors;
+  // Handle hide password
+  const [icon, setIcon] = useState('eye');
+  const [isHide, setIsHide] = useState(true);
+  const handleIconEye = () => {
+    setIcon(icon === "eye" ? "eye-off" : "eye");
+    setIsHide(!isHide);
+  };
+  // Handle email change
+  const handleUserNameChange = (text: string) => setUserName(text);
+  const handlePasswordChange = (text: string) => setPassword(text);
+  // Handle sign up
+  // Handle sign in
+  const handleSignUp = () => {
+    dispatch(signUpAction(userName, password, resetAuth));
+  };
+  useEffect(() => {
+    if (isAuthenticated === true) {
+      navigation.replace('TabNavigator');
+      ToastAndroid.show('Sign up successful!', ToastAndroid.SHORT);
+    }
+  }, [isAuthenticated]);
+
   return (
-    <SafeAreaView style={styles.safeView}>
+    <SafeAreaView style={{ backgroundColor: color.primary, flex: 1, justifyContent: 'space-between' }}>
 
       <View style={styles.logoContainer}>
-        <Image style={styles.logo} source={require('../assets/images/logo2.png')} resizeMode='contain' />
+        <Image source={require('../assets/images/logo2.png')} resizeMode='contain' />
       </View>
       <View style={styles.shopeeTextContainer}>
         <Image style={styles.shopeeText} source={require('../assets/images/shopeeText.png')} resizeMode='contain' />
       </View>
 
       <View style={styles.inputContainer}>
-        <View style={styles.emailInputContainer}>
-          <Text style={[styles.emailText, {color: theme.text}]}>Full Name</Text>
-          <TextInput style={styles.emailInput} />
+
+        <View style={styles.inputWrap}>
+          <Text style={[styles.emailText, { color: color.onText }]}>User Name</Text>
+          <TextInput style={[styles.emailInput, { backgroundColor: color.disabled, color: color.onSurface }]}
+            value={userName}
+            onChangeText={handleUserNameChange}
+          />
         </View>
 
-        <View style={styles.emailInputContainer}>
-          <Text style={[styles.emailText, {color: theme.text}]}>Email</Text>
-          <TextInput style={styles.emailInput} />
-        </View>
-
-        <View style={styles.emailInputContainer}>
-          <Text style={[styles.emailText, {color: theme.text}]}>Password</Text>
-          <TextInput style={styles.emailInput} secureTextEntry={true} />
+        <View style={styles.inputWrap}>
+          <Text style={[styles.emailText, { color: color.onText }]}>Password</Text>
+          <View style={[styles.passwordInputContainer, { backgroundColor: color.white }]}>
+            <TextInput style={[styles.passwordInput, { backgroundColor: color.disabled, color: color.onSurface }]}
+              secureTextEntry={isHide}
+              value={password}
+              onChangeText={handlePasswordChange}
+            />
+            <TouchableOpacity
+              style={[styles.eyeIcon, {backgroundColor: color.disabled}]}
+              onPress={handleIconEye}
+            >
+              <Feather name={icon} size={23} color={color.onSurface} />
+            </TouchableOpacity>
+          </View>
         </View>
 
       </View>
 
       <View style={styles.signUpBtnContainer}>
-        <TouchableOpacity style={styles.signUpBtn}>
+        <TouchableOpacity style={[styles.signUpBtn, { backgroundColor: color.success }]} onPress={handleSignUp}>
           <Text style={styles.signUpText}>Create Account</Text>
         </TouchableOpacity>
 
         <View style={styles.orContainer}>
-          <View style={{ height: 1, width: '35%', backgroundColor: theme.bgc }}></View>
-          <Text style={{ fontSize: 15, fontWeight: 'bold', color: theme.bgc }}>Or</Text>
-          <View style={{ height: 1, width: '35%', backgroundColor: theme.bgc }}></View>
+          <View style={{ height: 1, width: '35%', backgroundColor: color.surface }}></View>
+          <Text style={{ fontSize: 15, fontWeight: 'bold', color: color.surface }}>Or</Text>
+          <View style={{ height: 1, width: '35%', backgroundColor: color.surface }}></View>
         </View>
 
         <View style={styles.otherMethodIcon}>
-          <TouchableOpacity><Image source={require('../assets/icons/google.png')} resizeMode='cover'/></TouchableOpacity>
-          <TouchableOpacity><Image source={require('../assets/icons/meta.png')} resizeMode='cover'/></TouchableOpacity>
-          <TouchableOpacity><Image source={require('../assets/icons/instagram.png')} resizeMode='cover'/></TouchableOpacity>
+          <TouchableOpacity><Image source={require('../assets/icons/google.png')} resizeMode='cover' /></TouchableOpacity>
+          <TouchableOpacity><Image source={require('../assets/icons/meta.png')} resizeMode='cover' /></TouchableOpacity>
+          <TouchableOpacity><Image source={require('../assets/icons/instagram.png')} resizeMode='cover' /></TouchableOpacity>
         </View>
 
         <View style={styles.otherMethodContainer}>
-          <Text style={{ fontSize: 13, fontWeight: 'bold', color: theme.text }}>Have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
-            <Text style={{ fontSize: 13, fontWeight: 'bold', color: theme.bgc }}>Sign in</Text>
+          <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'black' }}>Have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('SignIn', resetAuth())}>
+            <Text style={{ fontSize: 13, fontWeight: 'bold', color: color.success }}>Sign in</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -65,15 +111,6 @@ const SignUp = ({ navigation }) => {
 export default SignUp;
 
 const styles = StyleSheet.create({
-  safeView: {
-    backgroundColor: '#F1B720',
-    flex: 1,
-    height: Dimensions.get('screen').height,
-    width: Dimensions.get('screen').width,
-    // alignItems: 'center',
-  },
-
-
   // Logo container
   logoContainer: {
     height: '25%',
@@ -82,9 +119,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     // borderWidth: 1
   },
-  logo: {
-  },
 
+  // SHopee text
   shopeeTextContainer: {
     height: 'auto',
     width: '100%',
@@ -103,10 +139,9 @@ const styles = StyleSheet.create({
     width: '100%',
     // borderWidth: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
   },
 
-  emailInputContainer: {
+  inputWrap: {
     height: 'auto',
     width: '85%',
     // borderWidth: 1,
@@ -124,6 +159,29 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
 
+  passwordInputContainer: {
+    height: 40,
+    width: '100%',
+    // borderWidth: 1,
+    flexDirection: 'row',
+    borderRadius: 5,
+  },
+  passwordInput: {
+    height: '100%',
+    width: '85%',
+    borderTopLeftRadius: 5,
+    borderBottomLeftRadius: 5,
+    paddingLeft: 10
+  },
+  eyeIcon: {
+    height: '100%',
+    width: '15%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+
 
   // Sign in btn container
   signUpBtnContainer: {
@@ -134,8 +192,8 @@ const styles = StyleSheet.create({
   },
 
   signUpBtn: {
-    height: 50,
-    width: '65%',
+    height: 40,
+    width: '85%',
     backgroundColor: '#644f19',
     borderRadius: 5,
     alignItems: 'center',
@@ -160,7 +218,7 @@ const styles = StyleSheet.create({
   },
 
   // Other method icons
-  otherMethodIcon:{
+  otherMethodIcon: {
     height: 'auto',
     width: '75%',
     flexDirection: 'row',
@@ -178,5 +236,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20
   }
 })
